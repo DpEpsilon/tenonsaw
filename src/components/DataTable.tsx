@@ -173,7 +173,7 @@ export function DataTable({ dataset }: DataTableProps) {
                   <div 
                     key={field} 
                     className="relative group px-2 py-2 border-r font-mono text-xs"
-                    style={{ width: columnState.width, minWidth: columnState.width, flexShrink: 0 }}
+                    style={{ flexBasis: columnState.width + 'px', flexGrow: 1, flexShrink: 0, minWidth: '80px' }}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
@@ -221,7 +221,7 @@ export function DataTable({ dataset }: DataTableProps) {
                       <div 
                         key={field} 
                         className="relative px-2 py-2 border-r"
-                        style={{ width: columnState.width, minWidth: columnState.width, flexShrink: 0 }}
+                        style={{ flexBasis: columnState.width + 'px', flexGrow: 1, flexShrink: 0, minWidth: '80px' }}
                       >
                         <div className="flex items-center justify-between">
                           <div 
