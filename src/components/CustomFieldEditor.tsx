@@ -156,7 +156,7 @@ export function CustomFieldEditor({ dataset }: CustomFieldEditorProps) {
           )}
 
           {/* Existing custom fields */}
-          {dataset.customFields.map((field) => (
+          {(dataset.customFields || []).map((field) => (
             <CustomFieldRow
               key={field.name}
               field={field}
@@ -168,7 +168,7 @@ export function CustomFieldEditor({ dataset }: CustomFieldEditorProps) {
             />
           ))}
 
-          {dataset.customFields.length === 0 && !isAdding && (
+          {(dataset.customFields || []).length === 0 && !isAdding && (
             <div className="text-center py-8 text-base-content/50">
               <Code className="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p>No custom fields yet.</p>

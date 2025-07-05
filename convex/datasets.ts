@@ -150,7 +150,8 @@ export const addCustomField = mutation({
     }
 
     // Check for duplicate field names
-    const existingField = dataset.customFields.find(f => f.name === args.name);
+    const customFields = dataset.customFields || [];
+    const existingField = customFields.find(f => f.name === args.name);
     if (existingField) {
       throw new ConvexError("Field name already exists");
     }
@@ -162,7 +163,7 @@ export const addCustomField = mutation({
     };
 
     await ctx.db.patch(args.datasetId, {
-      customFields: [...dataset.customFields, newCustomField],
+      customFields: [...customFields, newCustomField],
     });
   },
 });
@@ -183,7 +184,8 @@ export const removeCustomField = mutation({
       throw new ConvexError("Dataset not found");
     }
 
-    const updatedCustomFields = dataset.customFields.filter(
+    const customFields = dataset.customFields || [];
+    const updatedCustomFields = customFields.filter(
       field => field.name !== args.fieldName
     );
 
@@ -218,15 +220,17 @@ export const updateCustomField = mutation({
       throw new ConvexError(`Invalid JSONPath: ${validation.error}`);
     }
 
+    const customFields = dataset.customFields || [];
+    
     // Check for duplicate field names (excluding the field being updated)
     if (args.oldName !== args.newName) {
-      const existingField = dataset.customFields.find(f => f.name === args.newName);
+      const existingField = customFields.find(f => f.name === args.newName);
       if (existingField) {
         throw new ConvexError("Field name already exists");
       }
     }
 
-    const updatedCustomFields = dataset.customFields.map(field => 
+    const updatedCustomFields = customFields.map(field => 
       field.name === args.oldName
         ? { name: args.newName, jsonPath: args.jsonPath, type: args.type }
         : field

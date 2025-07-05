@@ -15,24 +15,13 @@ export const Route = createFileRoute("/dataset/$id")({
 
 function DatasetPage() {
   const { id } = Route.useParams();
-  const datasetId = id as Id<"datasets">;
 
   return (
-    <>
-      <Unauthenticated>
-        <div className="text-center not-prose">
-          <h1 className="text-2xl font-bold mb-4">Authentication Required</h1>
-          <p className="mb-4">Sign in to view this dataset.</p>
-          <Link to="/" className="btn btn-primary">
-            Go to Home Page
-          </Link>
-        </div>
-      </Unauthenticated>
-
-      <Authenticated>
-        <AuthenticatedDatasetView datasetId={datasetId} />
-      </Authenticated>
-    </>
+    <div>
+      <h1>Dataset Page</h1>
+      <p>Dataset ID: {id}</p>
+      <p>This is a test to see if the route works.</p>
+    </div>
   );
 }
 

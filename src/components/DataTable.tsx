@@ -44,7 +44,8 @@ export function DataTable({ dataset }: DataTableProps) {
 
   const extractValueFromRecord = (record: any, field: string): any => {
     // Check if this is a custom field
-    const customField = dataset.customFields.find(cf => cf.name === field);
+    const customFields = dataset.customFields || [];
+    const customField = customFields.find(cf => cf.name === field);
     if (customField) {
       try {
         const result = JSONPath({ path: customField.jsonPath, json: record.data });
@@ -59,9 +60,10 @@ export function DataTable({ dataset }: DataTableProps) {
   };
 
   // Get all fields to display (regular + custom)
+  const customFields = dataset.customFields || [];
   const allDisplayFields = [
     ...dataset.selectedFields,
-    ...dataset.customFields.map(cf => cf.name)
+    ...customFields.map(cf => cf.name)
   ];
 
   return (
@@ -80,7 +82,7 @@ export function DataTable({ dataset }: DataTableProps) {
               <tr>
                 <th className="w-16">#</th>
                 {allDisplayFields.map(field => {
-                  const customField = dataset.customFields.find(cf => cf.name === field);
+                  const customField = customFields.find(cf => cf.name === field);
                   return (
                     <th key={field} className="font-mono text-sm">
                       <div>
@@ -105,7 +107,7 @@ export function DataTable({ dataset }: DataTableProps) {
                   {allDisplayFields.map(field => {
                     const value = extractValueFromRecord(record, field);
                     const formattedValue = formatCellValue(value);
-                    const customField = dataset.customFields.find(cf => cf.name === field);
+                    const customField = customFields.find(cf => cf.name === field);
                     
                     return (
                       <td key={field} className="max-w-xs">
