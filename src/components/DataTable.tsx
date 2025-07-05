@@ -17,6 +17,7 @@ interface ColumnState {
 export function DataTable({ dataset }: DataTableProps) {
   const records = useQuery(api.datasets.getRecords, { datasetId: dataset._id });
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [expandedCell, setExpandedCell] = useState<{row: number, field: string, content: string} | null>(null);
   const [columnStates, setColumnStates] = useState<Record<string, ColumnState>>({});
   const [showColumnSettings, setShowColumnSettings] = useState(false);
   const resizingRef = useRef<{field: string, startX: number, startWidth: number} | null>(null);
@@ -205,10 +206,15 @@ export function DataTable({ dataset }: DataTableProps) {
             </div>
 
             {/* Data rows */}
-            {records.map((record, index) => (
-              <div key={record._id}>
-                <div className="flex hover:bg-base-200 group cursor-pointer border-b border-base-300" onClick={() => setExpandedRow(expandedRow === index ? null : index)}>
-                  <div className="flex-shrink-0 w-10 px-1 py-2 text-center text-xs font-mono text-base-content/70 border-r">
+            {records.map((record, index) => {
+              const isExpanded = expandedRow === index;
+              return (
+                <div 
+                  key={record._id}
+                  className={`flex hover:bg-base-200 group cursor-pointer border-b border-base-300 ${isExpanded ? 'bg-base-50' : ''}`} 
+                  onClick={() => setExpandedRow(expandedRow === index ? null : index)}
+                >
+                  <div className={`flex-shrink-0 w-10 px-1 text-center text-xs font-mono text-base-content/70 border-r ${isExpanded ? 'py-4' : 'py-2'}`}>
                     {index + 1}
                   </div>
                   {visibleFields.map(field => {
@@ -220,28 +226,44 @@ export function DataTable({ dataset }: DataTableProps) {
                     return (
                       <div 
                         key={field} 
-                        className="relative px-2 py-2 border-r"
+                        className={`relative px-2 border-r ${isExpanded ? 'py-4' : 'py-2'}`}
                         style={{ flexBasis: columnState.width + 'px', flexGrow: 1, flexShrink: 0, minWidth: '80px' }}
                       >
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between h-full">
                           <div 
-                            className="text-xs font-mono truncate leading-tight flex-1"
+                            className={`text-xs font-mono leading-tight flex-1 ${isExpanded ? 'whitespace-pre-wrap break-words max-h-32 overflow-auto' : 'truncate'}`}
                             title={formattedValue}
                           >
                             {formattedValue}
                           </div>
-                          {field === visibleFields[visibleFields.length - 1] && (
+                          <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity ml-1">
                             <button
-                              className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+                              className="btn btn-ghost btn-xs"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setExpandedRow(expandedRow === index ? null : index);
+                                setExpandedCell({
+                                  row: index,
+                                  field,
+                                  content: formattedValue
+                                });
                               }}
-                              title={expandedRow === index ? "Collapse row" : "Expand row"}
+                              title="Zoom into cell"
                             >
                               <Maximize2 className="w-3 h-3" />
                             </button>
-                          )}
+                            {field === visibleFields[visibleFields.length - 1] && (
+                              <button
+                                className="btn btn-ghost btn-xs"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setExpandedRow(expandedRow === index ? null : index);
+                                }}
+                                title={expandedRow === index ? "Collapse row" : "Expand row"}
+                              >
+                                <Table className="w-3 h-3" />
+                              </button>
+                            )}
+                          </div>
                         </div>
                         {customField && formattedValue.startsWith('Error:') && (
                           <div className="text-xs text-error mt-1">
@@ -252,54 +274,43 @@ export function DataTable({ dataset }: DataTableProps) {
                     );
                   })}
                 </div>
-                {expandedRow === index && (
-                  <div className="bg-base-100 px-2 py-3 border-b">
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold text-sm">Row {index + 1} - Full Content</h4>
-                        <button
-                          className="btn btn-ghost btn-xs"
-                          onClick={() => setExpandedRow(null)}
-                        >
-                          ✕
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {visibleFields.map(field => {
-                          const value = extractValueFromRecord(record, field);
-                          const formattedValue = formatCellValue(value);
-                          const customField = customFields.find(cf => cf.name === field);
-                          
-                          return (
-                            <div key={field} className="space-y-1">
-                              <div className="flex items-center space-x-2">
-                                <span className="font-semibold text-xs">{field}</span>
-                                {customField && (
-                                  <span className="badge badge-xs badge-outline">JSONPath</span>
-                                )}
-                              </div>
-                              {customField && (
-                                <div className="text-xs text-base-content/50 font-mono">
-                                  {customField.jsonPath}
-                                </div>
-                              )}
-                              <div className="bg-base-200 p-2 rounded text-xs font-mono max-h-32 overflow-auto">
-                                <pre className="whitespace-pre-wrap break-words">
-                                  {formattedValue}
-                                </pre>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
+
+      {/* Cell Zoom Modal */}
+      {expandedCell && (
+        <div className="modal modal-open">
+          <div className="modal-box max-w-4xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-bold text-lg">
+                Row {expandedCell.row + 1} - {expandedCell.field}
+              </h3>
+              <button
+                className="btn btn-sm btn-circle btn-ghost"
+                onClick={() => setExpandedCell(null)}
+              >
+                ✕
+              </button>
+            </div>
+            <div className="bg-base-200 p-4 rounded-lg">
+              <pre className="text-sm whitespace-pre-wrap overflow-auto max-h-96">
+                {expandedCell.content}
+              </pre>
+            </div>
+            <div className="modal-action">
+              <button
+                className="btn"
+                onClick={() => setExpandedCell(null)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
