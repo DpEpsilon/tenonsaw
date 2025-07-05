@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { ConvexError } from "convex/values";
-import { validateJsonPath } from "./jsonpath-utils";
+import { validateJsonPath } from "./jsonpathUtils";
 
 export const create = mutation({
   args: {

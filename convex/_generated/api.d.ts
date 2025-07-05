@@ -14,7 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as datasets from "../datasets.js";
-import type * as jsonpath_utils from "../jsonpath-utils.js";
+import type * as jsonpathUtils from "../jsonpathUtils.js";
 import type * as users from "../users.js";
 
 /**
@@ -27,7 +27,7 @@ import type * as users from "../users.js";
  */
 declare const fullApi: ApiFromModules<{
   datasets: typeof datasets;
-  "jsonpath-utils": typeof jsonpath_utils;
+  jsonpathUtils: typeof jsonpathUtils;
   users: typeof users;
 }>;
 export declare const api: FilterApi<
