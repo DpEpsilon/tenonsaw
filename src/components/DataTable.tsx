@@ -165,7 +165,7 @@ export function DataTable({ dataset }: DataTableProps) {
           <table className="table table-zebra w-full table-xs">
             <thead>
               <tr>
-                <th className="w-8 min-w-8 px-1">#</th>
+                <th className="w-auto px-1">#</th>
                 {visibleFields.map(field => {
                   const customField = customFields.find(cf => cf.name === field);
                   const columnState = getColumnState(field);
@@ -207,18 +207,9 @@ export function DataTable({ dataset }: DataTableProps) {
             <tbody>
               {records.map((record, index) => (
                 <>
-                  <tr key={record._id} className="hover:bg-base-200">
-                    <td className="font-mono text-xs text-base-content/70 w-8 px-1">
-                      <div className="flex flex-col items-center space-y-1">
-                        <span className="text-xs">{index + 1}</span>
-                        <button
-                          className="btn btn-ghost btn-xs p-0 min-h-0 h-4 w-4 opacity-60 hover:opacity-100"
-                          onClick={() => setExpandedRow(expandedRow === index ? null : index)}
-                          title={expandedRow === index ? "Collapse row" : "Expand row"}
-                        >
-                          <Maximize2 className="w-2 h-2" />
-                        </button>
-                      </div>
+                  <tr key={record._id} className="hover:bg-base-200 group cursor-pointer" onClick={() => setExpandedRow(expandedRow === index ? null : index)}>
+                    <td className="font-mono text-xs text-base-content/70 w-auto px-1 whitespace-nowrap">
+                      {index + 1}
                     </td>
                     {visibleFields.map(field => {
                       const value = extractValueFromRecord(record, field);
@@ -229,15 +220,28 @@ export function DataTable({ dataset }: DataTableProps) {
                       return (
                         <td 
                           key={field} 
-                          className="relative group px-2"
+                          className="relative px-2"
                           style={{ width: columnState.width, maxWidth: columnState.width }}
                         >
-                          <div 
-                            className="text-xs font-mono truncate cursor-pointer leading-tight"
-                            title={formattedValue}
-                            onClick={() => setExpandedRow(expandedRow === index ? null : index)}
-                          >
-                            {formattedValue}
+                          <div className="flex items-center justify-between">
+                            <div 
+                              className="text-xs font-mono truncate leading-tight flex-1"
+                              title={formattedValue}
+                            >
+                              {formattedValue}
+                            </div>
+                            {field === visibleFields[visibleFields.length - 1] && (
+                              <button
+                                className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setExpandedRow(expandedRow === index ? null : index);
+                                }}
+                                title={expandedRow === index ? "Collapse row" : "Expand row"}
+                              >
+                                <Maximize2 className="w-3 h-3" />
+                              </button>
+                            )}
                           </div>
                           {customField && formattedValue.startsWith('Error:') && (
                             <div className="text-xs text-error mt-1">
