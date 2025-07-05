@@ -14,12 +14,23 @@ Building a webapp for JSON record exploration with JSONL import capabilities. If
 - ✅ Gathered requirements - JSONL explorer app
 - ✅ Asked clarifying questions about field creation
 - ✅ Updated package.json name to "jsonl-explorer"
-- 🔄 Currently documenting responses
+- ✅ Created Convex schema for datasets and records
+- ✅ Built file upload component with JSONL parsing
+- ✅ Created field selection interface
+- ✅ Implemented data table with column configuration
+- ✅ Updated routing and removed demo content
+- 🔄 Currently testing implementation
 
 ## Commits Made During Session
-(none yet)
+- 8609f73: init: setup JSONL explorer app with updated package name and removed template instructions
+
+## Implementation Details
+- **Schema**: datasets table with field tracking, records table with JSON data
+- **Components**: FileUpload (JSONL parsing), FieldSelector (dropdown), DataTable (responsive)
+- **Routes**: Home page with dataset list, dataset detail page with table view
+- **Features**: File upload, field selection, data visualization, responsive design
 
 ## Next Steps
-- Remove template instructions from CLAUDE.md
-- Plan MVP implementation
-- Remove demo content and implement MVP
+- Test implementation with Playwright
+- Fix any bugs or issues found
+- Ready for commit and final testing

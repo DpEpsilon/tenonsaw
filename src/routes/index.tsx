@@ -3,14 +3,15 @@ import { convexQuery } from "@convex-dev/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Authenticated, Unauthenticated } from "convex/react";
-import { Zap } from "lucide-react";
+import { Database, Upload } from "lucide-react";
 import { api } from "../../convex/_generated/api";
+import { FileUpload } from "@/components/FileUpload";
 
-const usersQueryOptions = convexQuery(api.users.listUsers, {});
+const datasetsQueryOptions = convexQuery(api.datasets.list, {});
 
 export const Route = createFileRoute("/")({
   loader: async ({ context: { queryClient } }) =>
-    await queryClient.ensureQueryData(usersQueryOptions),
+    await queryClient.ensureQueryData(datasetsQueryOptions),
   component: HomePage,
 });
 
@@ -18,59 +19,71 @@ function HomePage() {
   return (
     <div className="text-center">
       <div className="not-prose flex justify-center mb-4">
-        <Zap className="w-16 h-16 text-primary" />
+        <Database className="w-16 h-16 text-primary" />
       </div>
-      <h1>Fullstack Vibe Coding</h1>
+      <h1>JSONL Explorer</h1>
+      <p className="text-lg opacity-80">Import, explore, and analyze JSON data from JSONL files</p>
 
       <Unauthenticated>
-        <p>Sign in to see the list of users.</p>
+        <p>Sign in to start exploring your data.</p>
         <div className="not-prose mt-4">
           <SignInButton mode="modal">
-            <button className="btn btn-primary btn-lg">Get Started</button>
+            <button className="btn btn-primary btn-lg">
+              <Upload className="w-5 h-5" />
+              Get Started
+            </button>
           </SignInButton>
         </div>
       </Unauthenticated>
 
       <Authenticated>
-        <UsersList />
+        <DatasetsList />
       </Authenticated>
     </div>
   );
 }
 
-function UsersList() {
-  const { data: users } = useSuspenseQuery(usersQueryOptions);
+function DatasetsList() {
+  const { data: datasets } = useSuspenseQuery(datasetsQueryOptions);
 
   return (
-    <>
-      <h2>Users</h2>
+    <div className="space-y-8">
+      <div className="not-prose">
+        <FileUpload />
+      </div>
 
-      {users.length === 0 ? (
+      {datasets.length === 0 ? (
         <div className="not-prose">
           <div className="p-8 bg-base-200 rounded-lg">
-            <p className="opacity-70">No users yet. You're the first!</p>
+            <p className="opacity-70">No datasets yet. Upload your first JSONL file to get started!</p>
           </div>
         </div>
       ) : (
-        <div className="not-prose overflow-x-auto">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Joined</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user._id}>
-                  <td>{user.name}</td>
-                  <td>{new Date(user._creationTime).toLocaleDateString()}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          <h2>Your Datasets</h2>
+          <div className="not-prose grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {datasets.map((dataset) => (
+              <div key={dataset._id} className="card card-border bg-base-100 hover:shadow-lg transition-shadow">
+                <div className="card-body">
+                  <h3 className="card-title text-lg">{dataset.name}</h3>
+                  {dataset.description && (
+                    <p className="text-sm opacity-70 mb-2">{dataset.description}</p>
+                  )}
+                  <div className="flex justify-between items-center text-sm opacity-70">
+                    <span>{dataset.recordCount} records</span>
+                    <span>{dataset.availableFields.length} fields</span>
+                  </div>
+                  <div className="card-actions justify-end mt-4">
+                    <a href={`/dataset/${dataset._id}`} className="btn btn-primary btn-sm">
+                      Explore
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
-    </>
+    </div>
   );
 }
