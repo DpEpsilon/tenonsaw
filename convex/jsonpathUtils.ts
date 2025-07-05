@@ -10,13 +10,13 @@ export function validateJsonPath(path: string): { isValid: boolean; error?: stri
     }
 
     // Basic pattern validation - check for common JSONPath patterns
-    const validPatterns = [
-      /^\$\.[a-zA-Z_][a-zA-Z0-9_]*$/, // $.field
-      /^\$\.[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)+$/, // $.field.subfield
-      /^\$\.[a-zA-Z_][a-zA-Z0-9_]*\[\d+\]$/, // $.field[0]
-      /^\$\.[a-zA-Z_][a-zA-Z0-9_]*\[\*\]$/, // $.field[*]
-      /^\$\.[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*\[\d+\](\.[a-zA-Z_][a-zA-Z0-9_]*)*$/, // $.field.sub[0].prop
-    ];
+    // const validPatterns = [
+    //   /^\$\.[a-zA-Z_][a-zA-Z0-9_]*$/, // $.field
+    //   /^\$\.[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)+$/, // $.field.subfield
+    //   /^\$\.[a-zA-Z_][a-zA-Z0-9_]*\[\d+\]$/, // $.field[0]
+    //   /^\$\.[a-zA-Z_][a-zA-Z0-9_]*\[\*\]$/, // $.field[*]
+    //   /^\$\.[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*\[\d+\](\.[a-zA-Z_][a-zA-Z0-9_]*)*$/, // $.field.sub[0].prop
+    // ];
 
     // Check for dangerous patterns
     const dangerousPatterns = [
