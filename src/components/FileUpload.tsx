@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { api } from "../../convex/_generated/api";
 import { Upload, FileText, AlertCircle, Check } from "lucide-react";
 
 export function FileUpload() {
@@ -22,7 +22,7 @@ export function FileUpload() {
         try {
           const record = JSON.parse(line);
           records.push(record);
-        } catch (e) {
+        } catch {
           throw new Error(`Invalid JSON on line ${i + 1}: ${line}`);
         }
       }
@@ -109,7 +109,7 @@ export function FileUpload() {
               type="file"
               accept=".jsonl,.json"
               className="file-input file-input-bordered w-full"
-              onChange={handleFileUpload}
+              onChange={(e) => void handleFileUpload(e)}
               disabled={isLoading}
             />
           </div>

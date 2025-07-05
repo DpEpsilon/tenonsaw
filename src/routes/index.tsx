@@ -5,7 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { Database, Upload } from "lucide-react";
 import { api } from "../../convex/_generated/api";
-import { FileUpload } from "@/components/FileUpload";
+import { FileUpload } from "../components/FileUpload";
 
 const datasetsQueryOptions = convexQuery(api.datasets.list, {});
 

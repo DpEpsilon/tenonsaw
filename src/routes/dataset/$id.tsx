@@ -4,8 +4,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { ArrowLeft, Database } from "lucide-react";
 import { api } from "../../../convex/_generated/api";
-import { DataTable } from "@/components/DataTable";
-import { FieldSelector } from "@/components/FieldSelector";
+import { DataTable } from "../../components/DataTable";
+import { FieldSelector } from "../../components/FieldSelector";
 import { Id } from "../../../convex/_generated/dataModel";
 
 export const Route = createFileRoute("/dataset/$id")({

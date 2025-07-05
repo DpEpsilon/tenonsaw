@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Doc, Id } from "@/convex/_generated/dataModel";
+import { api } from "../../convex/_generated/api";
+import { Doc } from "../../convex/_generated/dataModel";
 import { Settings, Check, X } from "lucide-react";
 
 interface FieldSelectorProps {
@@ -88,7 +88,7 @@ export function FieldSelector({ dataset }: FieldSelectorProps) {
               </span>
               <button
                 className="btn btn-primary btn-sm"
-                onClick={handleSave}
+                onClick={() => void handleSave()}
                 disabled={isSaving}
               >
                 {isSaving ? (
