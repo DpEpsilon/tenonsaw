@@ -35,13 +35,24 @@ Building a webapp for JSON record exploration with JSONL import capabilities. If
 - **Testing**: Responsive design tested, console clean, linting passed
 
 ## Ready for Use
-JSONL Explorer with JSONPath support is complete and functional. Users can:
+JSONL Explorer with advanced table features is complete and functional. Users can:
 1. Sign in with Clerk authentication
 2. Upload JSONL files with automatic parsing
 3. Select which top-level fields to display as table columns
 4. **NEW**: Create custom fields using JSONPath expressions for nested/array data
-5. View data in a responsive table format with both regular and custom fields
-6. Navigate between datasets
+5. **NEW**: Resize columns by dragging the column borders
+6. **NEW**: Hide/show columns using the "Columns" button
+7. **NEW**: Expand cells to view full content in a modal
+8. View data in a responsive table format with both regular and custom fields
+9. Navigate between datasets
+
+## Advanced Table Features
+- **Column Resizing**: Drag column borders to resize widths (minimum 100px)
+- **Column Visibility**: Toggle column visibility with checkboxes in the settings panel
+- **Cell Expansion**: Click cells or the expand button to view full content in a modal
+- **Hover Controls**: Column hide buttons and cell expand buttons appear on hover
+- **Responsive Design**: Table scrolls horizontally on smaller screens
+- **State Management**: Column widths and visibility persist during the session
 
 ## JSONPath Feature Details
 - **Custom Field Editor**: Add JSONPath expressions like `$.items[0].name` or `$.user.profile.email`
