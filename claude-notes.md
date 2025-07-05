@@ -27,6 +27,7 @@ Building a webapp for JSON record exploration with JSONL import capabilities. If
 - 8609f73: init: setup JSONL explorer app with updated package name and removed template instructions
 - cc3249d: feat: implement JSONL explorer with file upload, field selection, and data table
 - e493b7e: style: implement tighter spacing and higher information density
+- 9b65b39: feat: improve cell content display and expansion
 
 ## Implementation Details
 - **Schema**: datasets table with field tracking, records table with JSON data
@@ -48,11 +49,11 @@ JSONL Explorer with advanced table features is complete and functional. Users ca
 9. Navigate between datasets
 
 ## Advanced Table Features
-- **Column Resizing**: Drag column borders to resize widths (minimum 100px)
+- **Column Resizing**: Drag column borders to resize widths (minimum 80px)
 - **Column Visibility**: Toggle column visibility with checkboxes in the settings panel
-- **Cell Expansion**: Click cells or the expand button to view full content in a modal
-- **Hover Controls**: Column hide buttons and cell expand buttons appear on hover
-- **Responsive Design**: Table scrolls horizontally on smaller screens
+- **Row Expansion**: Click rows or expand button to view all fields with full content in place
+- **CSS-Based Truncation**: Text truncation responds to actual column width
+- **Responsive Design**: Table scrolls horizontally on smaller screens, expanded rows use responsive grid
 - **State Management**: Column widths and visibility persist during the session
 
 ## JSONPath Feature Details
@@ -67,5 +68,12 @@ JSONL Explorer with advanced table features is complete and functional. Users ca
 - **Collapsible Custom Fields**: Custom JSONPath Fields section now collapses by default with toggle
 - **Tighter Table Spacing**: Reduced padding, smaller text (table-xs), narrower default columns (150px)
 - **Compact Forms**: Reduced gaps and padding in all form components and cards
-- **Optimized Cell Display**: Shorter truncation and tighter line height for better information density
+- **CSS-Based Truncation**: Text truncation now responds to actual column width instead of fixed character count
 - **Responsive Column Resizing**: Minimum width reduced to 80px for very compact columns
+
+## Enhanced Content Display
+- **In-Place Row Expansion**: Replaced modal with in-place row expansion for better workflow
+- **Full Field Visibility**: Expanded rows show all fields with complete content and metadata
+- **Responsive Expanded Layout**: Uses grid layout that adapts to screen size
+- **JSONPath Indicators**: Shows JSONPath expressions and field types in expanded view
+- **Scrollable Content**: Long content is contained in scrollable areas within expanded view

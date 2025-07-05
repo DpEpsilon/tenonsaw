@@ -165,7 +165,7 @@ export function DataTable({ dataset }: DataTableProps) {
           <table className="table table-zebra w-full table-xs">
             <thead>
               <tr>
-                <th className="w-12 min-w-12 px-2">#</th>
+                <th className="w-8 min-w-8 px-1">#</th>
                 {visibleFields.map(field => {
                   const customField = customFields.find(cf => cf.name === field);
                   const columnState = getColumnState(field);
@@ -208,15 +208,15 @@ export function DataTable({ dataset }: DataTableProps) {
               {records.map((record, index) => (
                 <>
                   <tr key={record._id} className="hover:bg-base-200">
-                    <td className="font-mono text-xs text-base-content/70 w-12 px-2">
-                      <div className="flex items-center space-x-1">
-                        <span>{index + 1}</span>
+                    <td className="font-mono text-xs text-base-content/70 w-8 px-1">
+                      <div className="flex flex-col items-center space-y-1">
+                        <span className="text-xs">{index + 1}</span>
                         <button
-                          className="btn btn-ghost btn-xs opacity-60 hover:opacity-100"
+                          className="btn btn-ghost btn-xs p-0 min-h-0 h-4 w-4 opacity-60 hover:opacity-100"
                           onClick={() => setExpandedRow(expandedRow === index ? null : index)}
                           title={expandedRow === index ? "Collapse row" : "Expand row"}
                         >
-                          <Maximize2 className="w-3 h-3" />
+                          <Maximize2 className="w-2 h-2" />
                         </button>
                       </div>
                     </td>
