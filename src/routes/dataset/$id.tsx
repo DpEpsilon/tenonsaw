@@ -18,17 +18,21 @@ function DatasetPage() {
   const datasetId = id as Id<"datasets">;
 
   return (
-    <div>
+    <>
       <Unauthenticated>
-        <div className="text-center">
-          <p>Sign in to view this dataset.</p>
+        <div className="text-center not-prose">
+          <h1 className="text-2xl font-bold mb-4">Authentication Required</h1>
+          <p className="mb-4">Sign in to view this dataset.</p>
+          <Link to="/" className="btn btn-primary">
+            Go to Home Page
+          </Link>
         </div>
       </Unauthenticated>
 
       <Authenticated>
         <AuthenticatedDatasetView datasetId={datasetId} />
       </Authenticated>
-    </div>
+    </>
   );
 }
 
@@ -37,7 +41,7 @@ function AuthenticatedDatasetView({ datasetId }: { datasetId: Id<"datasets"> }) 
   const { data: dataset } = useSuspenseQuery(datasetQueryOptions);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 not-prose">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Link to="/" className="btn btn-ghost btn-sm">
@@ -54,7 +58,7 @@ function AuthenticatedDatasetView({ datasetId }: { datasetId: Id<"datasets"> }) 
             )}
           </div>
         </div>
-        <div className="not-prose">
+        <div>
           <FieldSelector dataset={dataset} />
         </div>
       </div>
@@ -74,13 +78,9 @@ function AuthenticatedDatasetView({ datasetId }: { datasetId: Id<"datasets"> }) 
         </div>
       </div>
 
-      <div className="not-prose">
-        <CustomFieldEditor dataset={dataset} />
-      </div>
+      <CustomFieldEditor dataset={dataset} />
 
-      <div className="not-prose">
-        <DataTable dataset={dataset} />
-      </div>
+      <DataTable dataset={dataset} />
     </div>
   );
 }
