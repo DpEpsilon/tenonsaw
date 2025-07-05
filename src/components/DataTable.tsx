@@ -162,152 +162,142 @@ export function DataTable({ dataset }: DataTableProps) {
         )}
 
         <div className="overflow-x-auto -mx-2">
-          <style>{`
-            .row-number-col {
-              width: 40px !important;
-              min-width: 40px !important;
-              max-width: 40px !important;
-            }
-          `}</style>
-          <table className="table table-zebra w-full table-xs">
-            <thead>
-              <tr>
-                <th className="px-1 row-number-col">#</th>
-                {visibleFields.map(field => {
-                  const customField = customFields.find(cf => cf.name === field);
-                  const columnState = getColumnState(field);
-                  return (
-                    <th 
-                      key={field} 
-                      className="font-mono text-xs relative group px-2"
-                      style={{ width: columnState.width, minWidth: columnState.width }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 min-w-0">
-                          <div className="truncate">{field}</div>
-                          {customField && (
-                            <div className="text-xs text-base-content/50 font-normal truncate leading-tight">
-                              {customField.jsonPath}
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            className="btn btn-ghost btn-xs"
-                            onClick={() => setColumnState(field, { visible: false })}
-                            title="Hide column"
-                          >
-                            <EyeOff className="w-3 h-3" />
-                          </button>
-                        </div>
+          <div className="min-w-full">
+            {/* Header */}
+            <div className="flex bg-base-200 text-xs font-semibold border-b">
+              <div className="flex-shrink-0 w-10 px-1 py-2 text-center border-r">#</div>
+              {visibleFields.map(field => {
+                const customField = customFields.find(cf => cf.name === field);
+                const columnState = getColumnState(field);
+                return (
+                  <div 
+                    key={field} 
+                    className="relative group px-2 py-2 border-r font-mono text-xs"
+                    style={{ width: columnState.width, minWidth: columnState.width, flexShrink: 0 }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1 min-w-0">
+                        <div className="truncate">{field}</div>
+                        {customField && (
+                          <div className="text-xs text-base-content/50 font-normal truncate leading-tight">
+                            {customField.jsonPath}
+                          </div>
+                        )}
                       </div>
-                      {/* Resize handle */}
-                      <div
-                        className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-transparent hover:bg-primary/30 transition-colors"
-                        onMouseDown={(e) => handleMouseDown(e, field)}
-                      />
-                    </th>
-                  );
-                })}
-              </tr>
-            </thead>
-            <tbody>
-              {records.map((record, index) => (
-                <>
-                  <tr key={record._id} className="hover:bg-base-200 group cursor-pointer" onClick={() => setExpandedRow(expandedRow === index ? null : index)}>
-                    <td className="font-mono text-xs text-base-content/70 px-1 whitespace-nowrap text-center row-number-col">
-                      {index + 1}
-                    </td>
-                    {visibleFields.map(field => {
-                      const value = extractValueFromRecord(record, field);
-                      const formattedValue = formatCellValue(value);
-                      const customField = customFields.find(cf => cf.name === field);
-                      const columnState = getColumnState(field);
-                      
-                      return (
-                        <td 
-                          key={field} 
-                          className="relative px-2"
-                          style={{ width: columnState.width, maxWidth: columnState.width }}
+                      <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          className="btn btn-ghost btn-xs"
+                          onClick={() => setColumnState(field, { visible: false })}
+                          title="Hide column"
                         >
-                          <div className="flex items-center justify-between">
-                            <div 
-                              className="text-xs font-mono truncate leading-tight flex-1"
-                              title={formattedValue}
-                            >
-                              {formattedValue}
-                            </div>
-                            {field === visibleFields[visibleFields.length - 1] && (
-                              <button
-                                className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 transition-opacity ml-1"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setExpandedRow(expandedRow === index ? null : index);
-                                }}
-                                title={expandedRow === index ? "Collapse row" : "Expand row"}
-                              >
-                                <Maximize2 className="w-3 h-3" />
-                              </button>
-                            )}
+                          <EyeOff className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                    {/* Resize handle */}
+                    <div
+                      className="absolute right-0 top-0 h-full w-1 cursor-col-resize bg-transparent hover:bg-primary/30 transition-colors"
+                      onMouseDown={(e) => handleMouseDown(e, field)}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Data rows */}
+            {records.map((record, index) => (
+              <div key={record._id}>
+                <div className="flex hover:bg-base-200 group cursor-pointer border-b border-base-300" onClick={() => setExpandedRow(expandedRow === index ? null : index)}>
+                  <div className="flex-shrink-0 w-10 px-1 py-2 text-center text-xs font-mono text-base-content/70 border-r">
+                    {index + 1}
+                  </div>
+                  {visibleFields.map(field => {
+                    const value = extractValueFromRecord(record, field);
+                    const formattedValue = formatCellValue(value);
+                    const customField = customFields.find(cf => cf.name === field);
+                    const columnState = getColumnState(field);
+                    
+                    return (
+                      <div 
+                        key={field} 
+                        className="relative px-2 py-2 border-r"
+                        style={{ width: columnState.width, minWidth: columnState.width, flexShrink: 0 }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div 
+                            className="text-xs font-mono truncate leading-tight flex-1"
+                            title={formattedValue}
+                          >
+                            {formattedValue}
                           </div>
-                          {customField && formattedValue.startsWith('Error:') && (
-                            <div className="text-xs text-error mt-1">
-                              JSONPath Error
-                            </div>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                  {expandedRow === index && (
-                    <tr className="bg-base-100">
-                      <td colSpan={visibleFields.length + 1} className="px-2 py-3">
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-semibold text-sm">Row {index + 1} - Full Content</h4>
+                          {field === visibleFields[visibleFields.length - 1] && (
                             <button
-                              className="btn btn-ghost btn-xs"
-                              onClick={() => setExpandedRow(null)}
+                              className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 transition-opacity ml-1"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setExpandedRow(expandedRow === index ? null : index);
+                              }}
+                              title={expandedRow === index ? "Collapse row" : "Expand row"}
                             >
-                              ✕
+                              <Maximize2 className="w-3 h-3" />
                             </button>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {visibleFields.map(field => {
-                              const value = extractValueFromRecord(record, field);
-                              const formattedValue = formatCellValue(value);
-                              const customField = customFields.find(cf => cf.name === field);
-                              
-                              return (
-                                <div key={field} className="space-y-1">
-                                  <div className="flex items-center space-x-2">
-                                    <span className="font-semibold text-xs">{field}</span>
-                                    {customField && (
-                                      <span className="badge badge-xs badge-outline">JSONPath</span>
-                                    )}
-                                  </div>
-                                  {customField && (
-                                    <div className="text-xs text-base-content/50 font-mono">
-                                      {customField.jsonPath}
-                                    </div>
-                                  )}
-                                  <div className="bg-base-200 p-2 rounded text-xs font-mono max-h-32 overflow-auto">
-                                    <pre className="whitespace-pre-wrap break-words">
-                                      {formattedValue}
-                                    </pre>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
+                          )}
                         </div>
-                      </td>
-                    </tr>
-                  )}
-                </>
-              ))}
-            </tbody>
-          </table>
+                        {customField && formattedValue.startsWith('Error:') && (
+                          <div className="text-xs text-error mt-1">
+                            JSONPath Error
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                {expandedRow === index && (
+                  <div className="bg-base-100 px-2 py-3 border-b">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold text-sm">Row {index + 1} - Full Content</h4>
+                        <button
+                          className="btn btn-ghost btn-xs"
+                          onClick={() => setExpandedRow(null)}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {visibleFields.map(field => {
+                          const value = extractValueFromRecord(record, field);
+                          const formattedValue = formatCellValue(value);
+                          const customField = customFields.find(cf => cf.name === field);
+                          
+                          return (
+                            <div key={field} className="space-y-1">
+                              <div className="flex items-center space-x-2">
+                                <span className="font-semibold text-xs">{field}</span>
+                                {customField && (
+                                  <span className="badge badge-xs badge-outline">JSONPath</span>
+                                )}
+                              </div>
+                              {customField && (
+                                <div className="text-xs text-base-content/50 font-mono">
+                                  {customField.jsonPath}
+                                </div>
+                              )}
+                              <div className="bg-base-200 p-2 rounded text-xs font-mono max-h-32 overflow-auto">
+                                <pre className="whitespace-pre-wrap break-words">
+                                  {formattedValue}
+                                </pre>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
