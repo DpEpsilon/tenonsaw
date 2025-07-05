@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { ConvexError } from "convex/values";
+import { validateJsonPath } from "./jsonpath-utils";
 
 export const create = mutation({
   args: {
@@ -32,6 +33,7 @@ export const create = mutation({
       recordCount: args.records.length,
       availableFields,
       selectedFields: availableFields.slice(0, 5), // Select first 5 fields by default
+      customFields: [], // Initialize empty custom fields array
     });
 
     // Insert all records
@@ -120,5 +122,118 @@ export const getRecords = query({
       .query("records")
       .withIndex("by_datasetId", (q) => q.eq("datasetId", args.datasetId))
       .collect();
+  },
+});
+
+export const addCustomField = mutation({
+  args: {
+    datasetId: v.id("datasets"),
+    name: v.string(),
+    jsonPath: v.string(),
+    type: v.optional(v.union(v.literal("string"), v.literal("number"), v.literal("boolean"), v.literal("array"), v.literal("object"))),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const dataset = await ctx.db.get(args.datasetId);
+    if (!dataset || dataset.userId !== identity.subject) {
+      throw new ConvexError("Dataset not found");
+    }
+
+    // Validate JSONPath expression
+    const validation = validateJsonPath(args.jsonPath);
+    if (!validation.isValid) {
+      throw new ConvexError(`Invalid JSONPath: ${validation.error}`);
+    }
+
+    // Check for duplicate field names
+    const existingField = dataset.customFields.find(f => f.name === args.name);
+    if (existingField) {
+      throw new ConvexError("Field name already exists");
+    }
+
+    const newCustomField = {
+      name: args.name,
+      jsonPath: args.jsonPath,
+      type: args.type,
+    };
+
+    await ctx.db.patch(args.datasetId, {
+      customFields: [...dataset.customFields, newCustomField],
+    });
+  },
+});
+
+export const removeCustomField = mutation({
+  args: {
+    datasetId: v.id("datasets"),
+    fieldName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const dataset = await ctx.db.get(args.datasetId);
+    if (!dataset || dataset.userId !== identity.subject) {
+      throw new ConvexError("Dataset not found");
+    }
+
+    const updatedCustomFields = dataset.customFields.filter(
+      field => field.name !== args.fieldName
+    );
+
+    await ctx.db.patch(args.datasetId, {
+      customFields: updatedCustomFields,
+    });
+  },
+});
+
+export const updateCustomField = mutation({
+  args: {
+    datasetId: v.id("datasets"),
+    oldName: v.string(),
+    newName: v.string(),
+    jsonPath: v.string(),
+    type: v.optional(v.union(v.literal("string"), v.literal("number"), v.literal("boolean"), v.literal("array"), v.literal("object"))),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new ConvexError("Not authenticated");
+    }
+
+    const dataset = await ctx.db.get(args.datasetId);
+    if (!dataset || dataset.userId !== identity.subject) {
+      throw new ConvexError("Dataset not found");
+    }
+
+    // Validate JSONPath expression
+    const validation = validateJsonPath(args.jsonPath);
+    if (!validation.isValid) {
+      throw new ConvexError(`Invalid JSONPath: ${validation.error}`);
+    }
+
+    // Check for duplicate field names (excluding the field being updated)
+    if (args.oldName !== args.newName) {
+      const existingField = dataset.customFields.find(f => f.name === args.newName);
+      if (existingField) {
+        throw new ConvexError("Field name already exists");
+      }
+    }
+
+    const updatedCustomFields = dataset.customFields.map(field => 
+      field.name === args.oldName
+        ? { name: args.newName, jsonPath: args.jsonPath, type: args.type }
+        : field
+    );
+
+    await ctx.db.patch(args.datasetId, {
+      customFields: updatedCustomFields,
+    });
   },
 });

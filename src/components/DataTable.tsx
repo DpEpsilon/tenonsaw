@@ -2,6 +2,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Doc } from "../../convex/_generated/dataModel";
 import { Table, AlertCircle } from "lucide-react";
+import { JSONPath } from "jsonpath-plus";
 
 interface DataTableProps {
   dataset: Doc<"datasets">;
@@ -41,6 +42,28 @@ export function DataTable({ dataset }: DataTableProps) {
     return text.substring(0, maxLength) + "...";
   };
 
+  const extractValueFromRecord = (record: any, field: string): any => {
+    // Check if this is a custom field
+    const customField = dataset.customFields.find(cf => cf.name === field);
+    if (customField) {
+      try {
+        const result = JSONPath({ path: customField.jsonPath, json: record.data });
+        return result.length > 0 ? result[0] : null;
+      } catch (error) {
+        console.error(`JSONPath error for field "${field}":`, error);
+        return `Error: ${error instanceof Error ? error.message : 'Invalid JSONPath'}`;
+      }
+    }
+    // Default to direct property access for regular fields
+    return record.data[field];
+  };
+
+  // Get all fields to display (regular + custom)
+  const allDisplayFields = [
+    ...dataset.selectedFields,
+    ...dataset.customFields.map(cf => cf.name)
+  ];
+
   return (
     <div className="card card-border bg-base-100">
       <div className="card-body">
@@ -56,11 +79,21 @@ export function DataTable({ dataset }: DataTableProps) {
             <thead>
               <tr>
                 <th className="w-16">#</th>
-                {dataset.selectedFields.map(field => (
-                  <th key={field} className="font-mono text-sm">
-                    {field}
-                  </th>
-                ))}
+                {allDisplayFields.map(field => {
+                  const customField = dataset.customFields.find(cf => cf.name === field);
+                  return (
+                    <th key={field} className="font-mono text-sm">
+                      <div>
+                        <div>{field}</div>
+                        {customField && (
+                          <div className="text-xs text-base-content/50 font-normal">
+                            {customField.jsonPath}
+                          </div>
+                        )}
+                      </div>
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
             <tbody>
@@ -69,18 +102,24 @@ export function DataTable({ dataset }: DataTableProps) {
                   <td className="font-mono text-sm text-base-content/70">
                     {index + 1}
                   </td>
-                  {dataset.selectedFields.map(field => {
-                    const value = record.data[field];
+                  {allDisplayFields.map(field => {
+                    const value = extractValueFromRecord(record, field);
                     const formattedValue = formatCellValue(value);
+                    const customField = dataset.customFields.find(cf => cf.name === field);
                     
                     return (
                       <td key={field} className="max-w-xs">
                         <div 
-                          className="font-mono text-sm"
+                          className={`text-sm ${customField ? 'font-mono' : 'font-mono'}`}
                           title={formattedValue}
                         >
                           {truncateText(formattedValue)}
                         </div>
+                        {customField && formattedValue.startsWith('Error:') && (
+                          <div className="text-xs text-error mt-1">
+                            JSONPath Error
+                          </div>
+                        )}
                       </td>
                     );
                   })}

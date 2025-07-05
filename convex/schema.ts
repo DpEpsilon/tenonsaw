@@ -16,6 +16,11 @@ export default defineSchema({
     recordCount: v.number(),
     availableFields: v.array(v.string()), // All unique field names found in the records
     selectedFields: v.array(v.string()), // Fields currently selected for display
+    customFields: v.array(v.object({
+      name: v.string(), // Display name for the field
+      jsonPath: v.string(), // JSONPath expression
+      type: v.optional(v.union(v.literal("string"), v.literal("number"), v.literal("boolean"), v.literal("array"), v.literal("object"))),
+    })), // Custom JSONPath fields
   }).index("by_userId", ["userId"]),
   
   records: defineTable({

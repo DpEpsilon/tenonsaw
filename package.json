@@ -20,6 +20,8 @@
     "@tanstack/react-router": "^1.119.0",
     "@tanstack/react-router-devtools": "^1.119.1",
     "convex": "^1.23.0",
+    "jsonpath": "^1.1.1",
+    "jsonpath-plus": "^10.3.0",
     "lucide-react": "^0.511.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

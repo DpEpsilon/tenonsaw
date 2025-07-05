@@ -6,6 +6,7 @@ import { ArrowLeft, Database } from "lucide-react";
 import { api } from "../../../convex/_generated/api";
 import { DataTable } from "../../components/DataTable";
 import { FieldSelector } from "../../components/FieldSelector";
+import { CustomFieldEditor } from "../../components/CustomFieldEditor";
 import { Id } from "../../../convex/_generated/dataModel";
 
 export const Route = createFileRoute("/dataset/$id")({
@@ -71,6 +72,10 @@ function AuthenticatedDatasetView({ datasetId }: { datasetId: Id<"datasets"> }) 
           <div className="stat-title">Selected Fields</div>
           <div className="stat-value text-accent">{dataset.selectedFields.length}</div>
         </div>
+      </div>
+
+      <div className="not-prose">
+        <CustomFieldEditor dataset={dataset} />
       </div>
 
       <div className="not-prose">
