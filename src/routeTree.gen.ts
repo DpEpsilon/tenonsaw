@@ -11,17 +11,10 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as TestImport } from './routes/test'
 import { Route as IndexImport } from './routes/index'
 import { Route as DatasetIdImport } from './routes/dataset/$id'
 
 // Create/Update Routes
-
-const TestRoute = TestImport.update({
-  id: '/test',
-  path: '/test',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -46,13 +39,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/test': {
-      id: '/test'
-      path: '/test'
-      fullPath: '/test'
-      preLoaderRoute: typeof TestImport
-      parentRoute: typeof rootRoute
-    }
     '/dataset/$id': {
       id: '/dataset/$id'
       path: '/dataset/$id'
@@ -67,41 +53,36 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/test': typeof TestRoute
   '/dataset/$id': typeof DatasetIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/test': typeof TestRoute
   '/dataset/$id': typeof DatasetIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/test': typeof TestRoute
   '/dataset/$id': typeof DatasetIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/test' | '/dataset/$id'
+  fullPaths: '/' | '/dataset/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/test' | '/dataset/$id'
-  id: '__root__' | '/' | '/test' | '/dataset/$id'
+  to: '/' | '/dataset/$id'
+  id: '__root__' | '/' | '/dataset/$id'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  TestRoute: typeof TestRoute
   DatasetIdRoute: typeof DatasetIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  TestRoute: TestRoute,
   DatasetIdRoute: DatasetIdRoute,
 }
 
@@ -116,15 +97,11 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/test",
         "/dataset/$id"
       ]
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/test": {
-      "filePath": "test.tsx"
     },
     "/dataset/$id": {
       "filePath": "dataset/$id.tsx"
