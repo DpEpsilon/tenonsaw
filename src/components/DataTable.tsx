@@ -165,7 +165,7 @@ export function DataTable({ dataset }: DataTableProps) {
           <table className="table table-zebra w-full table-xs">
             <thead>
               <tr>
-                <th className="w-auto px-1">#</th>
+                <th className="w-10 max-w-10 px-1">#</th>
                 {visibleFields.map(field => {
                   const customField = customFields.find(cf => cf.name === field);
                   const columnState = getColumnState(field);
@@ -208,7 +208,7 @@ export function DataTable({ dataset }: DataTableProps) {
               {records.map((record, index) => (
                 <>
                   <tr key={record._id} className="hover:bg-base-200 group cursor-pointer" onClick={() => setExpandedRow(expandedRow === index ? null : index)}>
-                    <td className="font-mono text-xs text-base-content/70 w-auto px-1 whitespace-nowrap">
+                    <td className="font-mono text-xs text-base-content/70 w-10 max-w-10 px-1 whitespace-nowrap text-center">
                       {index + 1}
                     </td>
                     {visibleFields.map(field => {
