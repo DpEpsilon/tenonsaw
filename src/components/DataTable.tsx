@@ -162,10 +162,17 @@ export function DataTable({ dataset }: DataTableProps) {
         )}
 
         <div className="overflow-x-auto -mx-2">
-          <table className="table table-zebra w-full table-xs" style={{ tableLayout: 'fixed' }}>
+          <style>{`
+            .row-number-col {
+              width: 40px !important;
+              min-width: 40px !important;
+              max-width: 40px !important;
+            }
+          `}</style>
+          <table className="table table-zebra w-full table-xs">
             <thead>
               <tr>
-                <th className="px-1" style={{ width: '40px', minWidth: '40px', maxWidth: '40px' }}>#</th>
+                <th className="px-1 row-number-col">#</th>
                 {visibleFields.map(field => {
                   const customField = customFields.find(cf => cf.name === field);
                   const columnState = getColumnState(field);
@@ -208,7 +215,7 @@ export function DataTable({ dataset }: DataTableProps) {
               {records.map((record, index) => (
                 <>
                   <tr key={record._id} className="hover:bg-base-200 group cursor-pointer" onClick={() => setExpandedRow(expandedRow === index ? null : index)}>
-                    <td className="font-mono text-xs text-base-content/70 px-1 whitespace-nowrap text-center" style={{ width: '40px', minWidth: '40px', maxWidth: '40px' }}>
+                    <td className="font-mono text-xs text-base-content/70 px-1 whitespace-nowrap text-center row-number-col">
                       {index + 1}
                     </td>
                     {visibleFields.map(field => {
