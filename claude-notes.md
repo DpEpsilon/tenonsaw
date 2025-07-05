@@ -28,6 +28,13 @@ Building a webapp for JSON record exploration with JSONL import capabilities. If
 - cc3249d: feat: implement JSONL explorer with file upload, field selection, and data table
 - e493b7e: style: implement tighter spacing and higher information density
 - 9b65b39: feat: improve cell content display and expansion
+- f7a553f: refactor: optimize row number column sizing and interaction
+- 9599f36: fix: properly constrain row number column width
+- b0e533a: fix: enforce fixed width for row number column using table-layout
+- 059cf56: fix: use CSS class with !important to force row number column width
+- 22b075d: refactor: replace HTML table with flexbox layout for precise column control
+- 3758be2: feat: make data columns fill available space with flexible layout
+- e925603: feat: refine row expansion and add individual cell zoom
 
 ## Implementation Details
 - **Schema**: datasets table with field tracking, records table with JSON data
@@ -72,8 +79,9 @@ JSONL Explorer with advanced table features is complete and functional. Users ca
 - **Responsive Column Resizing**: Minimum width reduced to 80px for very compact columns
 
 ## Enhanced Content Display
-- **In-Place Row Expansion**: Replaced modal with in-place row expansion for better workflow
-- **Full Field Visibility**: Expanded rows show all fields with complete content and metadata
-- **Responsive Expanded Layout**: Uses grid layout that adapts to screen size
-- **JSONPath Indicators**: Shows JSONPath expressions and field types in expanded view
-- **Scrollable Content**: Long content is contained in scrollable areas within expanded view
+- **In-Place Row Expansion**: Rows expand in place by becoming taller and showing full content
+- **Individual Cell Zoom**: Each cell has a zoom button for detailed modal view
+- **Dual Expansion Modes**: Row expansion shows all fields expanded, cell zoom focuses on one field
+- **Dynamic Row Heights**: Expanded rows automatically adjust height for content with scrollable areas
+- **Flexible Layout**: Uses flexbox for precise column control and space distribution
+- **Fixed Row Numbers**: Row number column stays exactly 40px while data columns fill available space

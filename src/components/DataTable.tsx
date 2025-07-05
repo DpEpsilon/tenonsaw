@@ -282,8 +282,8 @@ export function DataTable({ dataset }: DataTableProps) {
 
       {/* Cell Zoom Modal */}
       {expandedCell && (
-        <div className="modal modal-open">
-          <div className="modal-box max-w-4xl">
+        <div className="modal modal-open" onClick={() => setExpandedCell(null)}>
+          <div className="modal-box max-w-6xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-lg">
                 Row {expandedCell.row + 1} - {expandedCell.field}
@@ -296,7 +296,7 @@ export function DataTable({ dataset }: DataTableProps) {
               </button>
             </div>
             <div className="bg-base-200 p-4 rounded-lg">
-              <pre className="text-sm whitespace-pre-wrap overflow-auto max-h-96">
+              <pre className="text-xs font-mono whitespace-pre-wrap overflow-auto max-h-96 leading-tight">
                 {expandedCell.content}
               </pre>
             </div>
