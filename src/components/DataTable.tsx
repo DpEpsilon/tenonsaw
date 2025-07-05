@@ -30,13 +30,13 @@ export function DataTable({ dataset }: DataTableProps) {
 
   // Initialize column states
   const getColumnState = useCallback((field: string): ColumnState => {
-    return columnStates[field] || { width: 200, visible: true };
+    return columnStates[field] || { width: 150, visible: true };
   }, [columnStates]);
 
   const setColumnState = useCallback((field: string, state: Partial<ColumnState>) => {
     setColumnStates(prev => ({
       ...prev,
-      [field]: { ...(prev[field] || { width: 200, visible: true }), ...state }
+      [field]: { ...(prev[field] || { width: 150, visible: true }), ...state }
     }));
   }, []);
 
@@ -52,7 +52,7 @@ export function DataTable({ dataset }: DataTableProps) {
     const handleMouseMove = (e: MouseEvent) => {
       if (!resizingRef.current) return;
       const deltaX = e.clientX - resizingRef.current.startX;
-      const newWidth = Math.max(100, resizingRef.current.startWidth + deltaX);
+      const newWidth = Math.max(80, resizingRef.current.startWidth + deltaX);
       setColumnState(resizingRef.current.field, { width: newWidth });
     };
     
@@ -118,8 +118,8 @@ export function DataTable({ dataset }: DataTableProps) {
 
   return (
     <div className="card card-border bg-base-100">
-      <div className="card-body">
-        <div className="flex items-center justify-between mb-4">
+      <div className="card-body px-2 py-3">
+        <div className="flex items-center justify-between mb-3">
           <h3 className="card-title">
             <Table className="w-5 h-5" />
             Data Records ({records.length})
@@ -137,7 +137,7 @@ export function DataTable({ dataset }: DataTableProps) {
 
         {/* Column Settings Panel */}
         {showColumnSettings && (
-          <div className="mb-4 p-4 bg-base-200 rounded-lg">
+          <div className="mb-3 p-3 bg-base-200 rounded-lg">
             <h4 className="font-semibold mb-3">Column Visibility</h4>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
               {allDisplayFields.map(field => {
@@ -166,25 +166,25 @@ export function DataTable({ dataset }: DataTableProps) {
           </div>
         )}
 
-        <div className="overflow-x-auto">
-          <table className="table table-zebra w-full">
+        <div className="overflow-x-auto -mx-2">
+          <table className="table table-zebra w-full table-xs">
             <thead>
               <tr>
-                <th className="w-16 min-w-16">#</th>
+                <th className="w-12 min-w-12 px-2">#</th>
                 {visibleFields.map(field => {
                   const customField = customFields.find(cf => cf.name === field);
                   const columnState = getColumnState(field);
                   return (
                     <th 
                       key={field} 
-                      className="font-mono text-sm relative group"
+                      className="font-mono text-xs relative group px-2"
                       style={{ width: columnState.width, minWidth: columnState.width }}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex-1 min-w-0">
                           <div className="truncate">{field}</div>
                           {customField && (
-                            <div className="text-xs text-base-content/50 font-normal truncate">
+                            <div className="text-xs text-base-content/50 font-normal truncate leading-tight">
                               {customField.jsonPath}
                             </div>
                           )}
@@ -212,7 +212,7 @@ export function DataTable({ dataset }: DataTableProps) {
             <tbody>
               {records.map((record, index) => (
                 <tr key={record._id} className="hover:bg-base-200">
-                  <td className="font-mono text-sm text-base-content/70 w-16">
+                  <td className="font-mono text-xs text-base-content/70 w-12 px-2">
                     {index + 1}
                   </td>
                   {visibleFields.map(field => {
@@ -224,12 +224,12 @@ export function DataTable({ dataset }: DataTableProps) {
                     return (
                       <td 
                         key={field} 
-                        className="relative group"
+                        className="relative group px-2"
                         style={{ width: columnState.width, maxWidth: columnState.width }}
                       >
                         <div className="flex items-center justify-between">
                           <div 
-                            className="text-sm font-mono truncate flex-1 cursor-pointer"
+                            className="text-xs font-mono truncate flex-1 cursor-pointer leading-tight"
                             title={formattedValue}
                             onClick={() => setExpandedCell({
                               row: index,
@@ -237,7 +237,7 @@ export function DataTable({ dataset }: DataTableProps) {
                               content: formattedValue
                             })}
                           >
-                            {truncateText(formattedValue, 30)}
+                            {truncateText(formattedValue, 25)}
                           </div>
                           <button
                             className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 transition-opacity ml-1"
