@@ -35,9 +35,18 @@ Building a webapp for JSON record exploration with JSONL import capabilities. If
 - **Testing**: Responsive design tested, console clean, linting passed
 
 ## Ready for Use
-JSONL Explorer MVP is complete and functional. Users can:
+JSONL Explorer with JSONPath support is complete and functional. Users can:
 1. Sign in with Clerk authentication
 2. Upload JSONL files with automatic parsing
-3. Select which fields to display as table columns
-4. View data in a responsive table format
-5. Navigate between datasets
+3. Select which top-level fields to display as table columns
+4. **NEW**: Create custom fields using JSONPath expressions for nested/array data
+5. View data in a responsive table format with both regular and custom fields
+6. Navigate between datasets
+
+## JSONPath Feature Details
+- **Custom Field Editor**: Add JSONPath expressions like `$.items[0].name` or `$.user.profile.email`
+- **Validation**: Backend validates JSONPath syntax and prevents duplicates
+- **Error Handling**: Clear error messages for invalid expressions
+- **Data Extraction**: Uses jsonpath-plus library for reliable data extraction
+- **Visual Indicators**: Custom fields show JSONPath expression in table headers
+- **Type Support**: Optional type hints (string, number, boolean, array, object)
