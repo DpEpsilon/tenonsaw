@@ -16,7 +16,7 @@ interface ColumnState {
 
 export function DataTable({ dataset }: DataTableProps) {
   const records = useQuery(api.datasets.getRecords, { datasetId: dataset._id });
-  const [expandedCell, setExpandedCell] = useState<{row: number, field: string, content: string} | null>(null);
+  const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [columnStates, setColumnStates] = useState<Record<string, ColumnState>>({});
   const [showColumnSettings, setShowColumnSettings] = useState(false);
   const resizingRef = useRef<{field: string, startX: number, startWidth: number} | null>(null);
@@ -92,11 +92,6 @@ export function DataTable({ dataset }: DataTableProps) {
     if (value === null || value === undefined) return "";
     if (typeof value === "object") return JSON.stringify(value);
     return String(value);
-  };
-
-  const truncateText = (text: string, maxLength: number = 50): string => {
-    if (text.length <= maxLength) return text;
-    return text.substring(0, maxLength) + "...";
   };
 
   const extractValueFromRecord = (record: any, field: string): any => {
@@ -211,92 +206,99 @@ export function DataTable({ dataset }: DataTableProps) {
             </thead>
             <tbody>
               {records.map((record, index) => (
-                <tr key={record._id} className="hover:bg-base-200">
-                  <td className="font-mono text-xs text-base-content/70 w-12 px-2">
-                    {index + 1}
-                  </td>
-                  {visibleFields.map(field => {
-                    const value = extractValueFromRecord(record, field);
-                    const formattedValue = formatCellValue(value);
-                    const customField = customFields.find(cf => cf.name === field);
-                    const columnState = getColumnState(field);
-                    
-                    return (
-                      <td 
-                        key={field} 
-                        className="relative group px-2"
-                        style={{ width: columnState.width, maxWidth: columnState.width }}
-                      >
-                        <div className="flex items-center justify-between">
+                <>
+                  <tr key={record._id} className="hover:bg-base-200">
+                    <td className="font-mono text-xs text-base-content/70 w-12 px-2">
+                      <div className="flex items-center space-x-1">
+                        <span>{index + 1}</span>
+                        <button
+                          className="btn btn-ghost btn-xs opacity-60 hover:opacity-100"
+                          onClick={() => setExpandedRow(expandedRow === index ? null : index)}
+                          title={expandedRow === index ? "Collapse row" : "Expand row"}
+                        >
+                          <Maximize2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </td>
+                    {visibleFields.map(field => {
+                      const value = extractValueFromRecord(record, field);
+                      const formattedValue = formatCellValue(value);
+                      const customField = customFields.find(cf => cf.name === field);
+                      const columnState = getColumnState(field);
+                      
+                      return (
+                        <td 
+                          key={field} 
+                          className="relative group px-2"
+                          style={{ width: columnState.width, maxWidth: columnState.width }}
+                        >
                           <div 
-                            className="text-xs font-mono truncate flex-1 cursor-pointer leading-tight"
+                            className="text-xs font-mono truncate cursor-pointer leading-tight"
                             title={formattedValue}
-                            onClick={() => setExpandedCell({
-                              row: index,
-                              field,
-                              content: formattedValue
-                            })}
+                            onClick={() => setExpandedRow(expandedRow === index ? null : index)}
                           >
-                            {truncateText(formattedValue, 25)}
+                            {formattedValue}
                           </div>
-                          <button
-                            className="btn btn-ghost btn-xs opacity-0 group-hover:opacity-100 transition-opacity ml-1"
-                            onClick={() => setExpandedCell({
-                              row: index,
-                              field,
-                              content: formattedValue
+                          {customField && formattedValue.startsWith('Error:') && (
+                            <div className="text-xs text-error mt-1">
+                              JSONPath Error
+                            </div>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                  {expandedRow === index && (
+                    <tr className="bg-base-100">
+                      <td colSpan={visibleFields.length + 1} className="px-2 py-3">
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-semibold text-sm">Row {index + 1} - Full Content</h4>
+                            <button
+                              className="btn btn-ghost btn-xs"
+                              onClick={() => setExpandedRow(null)}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {visibleFields.map(field => {
+                              const value = extractValueFromRecord(record, field);
+                              const formattedValue = formatCellValue(value);
+                              const customField = customFields.find(cf => cf.name === field);
+                              
+                              return (
+                                <div key={field} className="space-y-1">
+                                  <div className="flex items-center space-x-2">
+                                    <span className="font-semibold text-xs">{field}</span>
+                                    {customField && (
+                                      <span className="badge badge-xs badge-outline">JSONPath</span>
+                                    )}
+                                  </div>
+                                  {customField && (
+                                    <div className="text-xs text-base-content/50 font-mono">
+                                      {customField.jsonPath}
+                                    </div>
+                                  )}
+                                  <div className="bg-base-200 p-2 rounded text-xs font-mono max-h-32 overflow-auto">
+                                    <pre className="whitespace-pre-wrap break-words">
+                                      {formattedValue}
+                                    </pre>
+                                  </div>
+                                </div>
+                              );
                             })}
-                            title="Expand cell"
-                          >
-                            <Maximize2 className="w-3 h-3" />
-                          </button>
+                          </div>
                         </div>
-                        {customField && formattedValue.startsWith('Error:') && (
-                          <div className="text-xs text-error mt-1">
-                            JSONPath Error
-                          </div>
-                        )}
                       </td>
-                    );
-                  })}
-                </tr>
+                    </tr>
+                  )}
+                </>
               ))}
             </tbody>
           </table>
         </div>
       </div>
-
-      {/* Cell Expansion Modal */}
-      {expandedCell && (
-        <div className="modal modal-open">
-          <div className="modal-box max-w-4xl">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-lg">
-                Row {expandedCell.row + 1} - {expandedCell.field}
-              </h3>
-              <button
-                className="btn btn-sm btn-circle btn-ghost"
-                onClick={() => setExpandedCell(null)}
-              >
-                ✕
-              </button>
-            </div>
-            <div className="bg-base-200 p-4 rounded-lg">
-              <pre className="text-sm whitespace-pre-wrap overflow-auto max-h-96">
-                {expandedCell.content}
-              </pre>
-            </div>
-            <div className="modal-action">
-              <button
-                className="btn"
-                onClick={() => setExpandedCell(null)}
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
